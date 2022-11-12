@@ -1,6 +1,7 @@
 package telran.java2022.forum.user.model;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
@@ -20,5 +21,5 @@ public class User {
 	String password;
 	String firstName;
 	String lastName;
-	Set<String> roles = new HashSet<String>();
+	Set<String> roles = new HashSet<String>(List.of("USER"));
 }

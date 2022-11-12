@@ -1,7 +1,5 @@
 package telran.java2022.forum.user.service;
 
-import telran.java2022.forum.user.dto.ChangePasswordDto;
-import telran.java2022.forum.user.dto.LoginDto;
 import telran.java2022.forum.user.dto.RegisterDto;
 import telran.java2022.forum.user.dto.UpdateUserDto;
 import telran.java2022.forum.user.dto.UserDto;
@@ -9,7 +7,7 @@ import telran.java2022.forum.user.dto.UserDto;
 public interface UserService {
 	UserDto register(RegisterDto registerDto);
 
-	UserDto login(LoginDto loginDto);
+	UserDto login(String login);
 
 	UserDto deleteUser(String login);
 
@@ -19,5 +17,5 @@ public interface UserService {
 
 	UserDto deleteRole(String login, String role);
 
-	void changePassword(ChangePasswordDto changePasswordDto);
+	void changePassword(String login, String newPassword);
 }
