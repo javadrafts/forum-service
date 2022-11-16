@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import telran.java2022.forum.post.dao.PostRepository;
 import telran.java2022.forum.post.model.Post;
+import telran.java2022.forum.security.context.SecurityContext;
+import telran.java2022.forum.security.context.UserIdentity;
 import telran.java2022.forum.user.dao.UserRepository;
 import telran.java2022.forum.user.model.User;
 
@@ -23,7 +25,7 @@ import telran.java2022.forum.user.model.User;
 @Component
 @RequiredArgsConstructor
 public class OwnerOrModeratorFilter implements Filter {
-	final UserRepository userRepository;
+	final SecurityContext securityContext;
 	final PostRepository postRepository;
 
 	@Override
@@ -36,9 +38,9 @@ public class OwnerOrModeratorFilter implements Filter {
 		String servletPath = httpRequest.getServletPath();
 
 		if (checkEndPoint(method, servletPath)) {
-			User user = userRepository.findById(httpRequest.getUserPrincipal().getName()).get();
+			UserIdentity userIdentity = securityContext.getUser(httpRequest.getUserPrincipal().getName());
 
-			boolean moderatorAccessEnforced = user.getRoles().contains("MODERATOR")
+			boolean moderatorAccessEnforced = userIdentity.getRoles().contains("MODERATOR")
 					&& checkModeratorAccess(method, servletPath);
 
 			if (!moderatorAccessEnforced) {
@@ -54,7 +56,7 @@ public class OwnerOrModeratorFilter implements Filter {
 						return;
 					}
 
-					if (!post.getAuthor().equals(user.getLogin())) {
+					if (!post.getAuthor().equals(userIdentity.getUserName())) {
 						httpResponse.sendError(403);
 						return;
 					}

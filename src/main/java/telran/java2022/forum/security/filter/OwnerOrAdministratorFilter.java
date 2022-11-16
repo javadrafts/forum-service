@@ -14,6 +14,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import telran.java2022.forum.security.context.SecurityContext;
+import telran.java2022.forum.security.context.UserIdentity;
 import telran.java2022.forum.user.dao.UserRepository;
 import telran.java2022.forum.user.model.User;
 
@@ -21,7 +23,7 @@ import telran.java2022.forum.user.model.User;
 @Component
 @RequiredArgsConstructor
 public class OwnerOrAdministratorFilter implements Filter {
-	final UserRepository userRepository;
+	final SecurityContext securityContext;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -33,9 +35,9 @@ public class OwnerOrAdministratorFilter implements Filter {
 		String servletPath = httpRequest.getServletPath();
 
 		if (checkEndPoint(method, servletPath)) {
-			User user = userRepository.findById(httpRequest.getUserPrincipal().getName()).get();
+			UserIdentity userIdentity = securityContext.getUser(httpRequest.getUserPrincipal().getName());
 
-			boolean administratorAccessEnforced = user.getRoles().contains("ADMINISTRATOR")
+			boolean administratorAccessEnforced = userIdentity.getRoles().contains("ADMINISTRATOR")
 					&& checkAdministratorAccess(method, servletPath);
 
 			if (!administratorAccessEnforced) {
@@ -44,7 +46,7 @@ public class OwnerOrAdministratorFilter implements Filter {
 
 					String login = splittedServletPath[splittedServletPath.length - 1];
 
-					if (!login.equals(user.getLogin())) {
+					if (!login.equals(userIdentity.getUserName())) {
 						httpResponse.sendError(403);
 						return;
 					}

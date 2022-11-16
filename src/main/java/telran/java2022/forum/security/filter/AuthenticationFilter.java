@@ -19,6 +19,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import telran.java2022.forum.security.context.SecurityContext;
+import telran.java2022.forum.security.context.UserIdentity;
 import telran.java2022.forum.user.dao.UserRepository;
 import telran.java2022.forum.user.model.User;
 
@@ -27,6 +29,7 @@ import telran.java2022.forum.user.model.User;
 @RequiredArgsConstructor
 public class AuthenticationFilter implements Filter {
 	final UserRepository userRepository;
+	final SecurityContext securityContext;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -61,6 +64,14 @@ public class AuthenticationFilter implements Filter {
 			}
 
 			httpRequest = new WrappedRequest(httpRequest, user.getLogin());
+
+			UserIdentity userIdentity = UserIdentity.builder()
+					.userName(user.getLogin())
+					.password(user.getPassword())
+					.roles(user.getRoles())
+					.build();
+			
+			securityContext.addUser(userIdentity);
 		}
 
 		chain.doFilter(httpRequest, httpResponse);
