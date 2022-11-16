@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import telran.java2022.forum.security.context.SecurityContext;
 import telran.java2022.forum.security.context.UserIdentity;
-import telran.java2022.forum.user.dao.UserRepository;
-import telran.java2022.forum.user.model.User;
 
 @Order(20)
 @Component

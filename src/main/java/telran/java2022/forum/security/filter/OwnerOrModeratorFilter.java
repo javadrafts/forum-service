@@ -18,8 +18,6 @@ import telran.java2022.forum.post.dao.PostRepository;
 import telran.java2022.forum.post.model.Post;
 import telran.java2022.forum.security.context.SecurityContext;
 import telran.java2022.forum.security.context.UserIdentity;
-import telran.java2022.forum.user.dao.UserRepository;
-import telran.java2022.forum.user.model.User;
 
 @Order(30)
 @Component
