@@ -1,7 +1,10 @@
 package telran.java2022.forum.user.service;
 
+import java.util.List;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -15,7 +18,7 @@ import telran.java2022.forum.user.model.User;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, CommandLineRunner {
 	final UserRepository userRepository;
 	final ModelMapper modelMapper;
 
@@ -97,5 +100,19 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
 
 		user = userRepository.save(user);
+	}
+	
+	@Override
+	public void run(String... args) throws Exception {
+		if (!userRepository.existsById("admin")) {
+			String password = BCrypt.hashpw("admin", BCrypt.gensalt());
+
+			User user = new User();
+			user.setLogin("admin");
+			user.setPassword(password);
+			user.getRoles().addAll(List.of("MODERATOR", "ADMINISTRATOR"));
+
+			userRepository.save(user);
+		}
 	}
 }
